@@ -123,6 +123,8 @@ dns:
     - RULE-SET,spotify,fake-ip
     - RULE-SET,cryptocurrency,fake-ip
     - RULE-SET,ehentai,fake-ip
+    - RULE-SET,taiwan-media,台湾流媒体
+
     # 兜底规则
     - RULE-SET,geolocation-!cn,fake-ip
     - MATCH,fake-ip
@@ -223,6 +225,15 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/appshubcc/bett-rules@meta/geo/geoip/cn.mrs'
     path: './ruleset/cn_ip.mrs'
     path-in-bundle: 'geo/geoip/cn.mrs'
+    # --- 台湾流媒体 ---
+  taiwan-media:
+    type: http
+    behavior: classical
+    format: yaml
+    url: 'https://raw.githubusercontent.com/ningyufeng651/clash-rules/refs/heads/main/%E5%8F%B0%E6%B9%BE%E6%B5%81%E5%AA%92%E4%BD%93.yaml'
+    path: './ruleset/taiwan-media.yaml'
+    interval: 86400
+
 
   # --- 代理规则集 ---
 
@@ -627,6 +638,12 @@ proxy-groups:
     default-selected: '美国'
     <<: [*group_common_select, *proxies_default]
     icon: 'https://fastly.jsdelivr.net/gh/lige47/QuanX-icon-rule@main/icon/04ProxySoft/exhentai.png'
+  
+  - name: '台湾流媒体'
+    <<: [*group_common_select, *proxies_default]
+    default-selected: '台湾省'
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png'
+
 
   - name: 'AdBlock'
     <<: [*group_common_select, *proxies_reject]
