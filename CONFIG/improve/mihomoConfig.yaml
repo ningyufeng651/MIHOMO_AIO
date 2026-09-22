@@ -31,6 +31,27 @@ proxy-providers:
     path: ./proxy_provider/provider1.yaml
     override:
       additional-prefix: 'p1 | ' # 给节点名称添加前缀，防止不同订阅的节点重名导致出现问题
+  provider2:
+    <<: [*proxy_providers_common, *global_exclude_filter]
+    url: '' # 此处单引号中间填入机场订阅链接
+    age-secret-key: '' # 此处填入机场订阅链接解密私钥，如果机场订阅链接需要解密才能使用，请将解密私钥填入单引号中间，否则不要改动此项
+    path: ./proxy_provider/provider2.yaml
+    override:
+      additional-prefix: 'p2 | ' # 给节点名称添加前缀，防止不同订阅的节点重名导致出现问题
+  provider3:
+    <<: [*proxy_providers_common, *global_exclude_filter]
+    url: '' # 此处单引号中间填入机场订阅链接
+    age-secret-key: '' # 此处填入机场订阅链接解密私钥，如果机场订阅链接需要解密才能使用，请将解密私钥填入单引号中间，否则不要改动此项
+    path: ./proxy_provider/provider3.yaml
+    override:
+      additional-prefix: 'p3 | ' # 给节点名称添加前缀，防止不同订阅的节点重名导致出现问题
+  provider4:
+    <<: [*proxy_providers_common, *global_exclude_filter]
+    url: '' # 此处单引号中间填入机场订阅链接
+    age-secret-key: '' # 此处填入机场订阅链接解密私钥，如果机场订阅链接需要解密才能使用，请将解密私钥填入单引号中间，否则不要改动此项
+    path: ./proxy_provider/provider4.yaml
+    override:
+      additional-prefix: 'p4 | ' # 给节点名称添加前缀，防止不同订阅的节点重名导致出现问题
 
 # 以下是一个示例，各行缩进必须严格对齐provider1
 # provider2:
@@ -162,7 +183,7 @@ ntp:
 
 tun:
   enable: true
-  stack: mips
+  stack: mixed
   auto-route: true
   strict-route: true
   auto-redirect: true
@@ -225,14 +246,6 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/appshubcc/bett-rules@meta/geo/geoip/cn.mrs'
     path: './ruleset/cn_ip.mrs'
     path-in-bundle: 'geo/geoip/cn.mrs'
-    # --- 台湾流媒体 ---
-  taiwan-media:
-    type: http
-    behavior: classical
-    format: yaml
-    url: 'https://raw.githubusercontent.com/ningyufeng651/clash-rules/refs/heads/main/%E5%8F%B0%E6%B9%BE%E6%B5%81%E5%AA%92%E4%BD%93.yaml'
-    path: './ruleset/taiwan-media.yaml'
-    interval: 86400
 
 
   # --- 代理规则集 ---
@@ -415,6 +428,22 @@ rule-providers:
     url: 'https://fastly.jsdelivr.net/gh/appshubcc/bett-rules@meta/geo/geosite/cn.mrs'
     path: './ruleset/cn.mrs'
     path-in-bundle: 'geo/geosite/cn.mrs'
+  # --- 台湾流媒体（自添加） ---
+  taiwan-media:
+    type: http
+    behavior: classical
+    format: yaml
+    url: 'https://raw.githubusercontent.com/ningyufeng651/clash-rules/refs/heads/main/%E5%8F%B0%E6%B9%BE%E6%B5%81%E5%AA%92%E4%BD%93.yaml'
+    path: './ruleset/taiwan-media.yaml'
+    interval: 86400
+  # --- 香港流媒体（自添加） ---
+  hk-media:
+    type: http
+    behavior: classical
+    format: yaml
+    url: 'https://raw.githubusercontent.com/ningyufeng651/clash-rules/refs/heads/main/hk.yaml'
+    path: './ruleset/hk-media.yaml'
+    interval: 86400
 
 # --- 策略组 (Proxy Groups) ---
 
@@ -643,6 +672,11 @@ proxy-groups:
     <<: [*group_common_select, *proxies_default]
     default-selected: '台湾省'
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png'
+  - name: '香港流媒体'
+    <<: [*group_common_select, *proxies_default]
+    default-selected: '香港'
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/HongKong.png'
+
 
 
   - name: 'AdBlock'
@@ -699,6 +733,14 @@ proxy-groups:
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Taiwan.png'
   - name: '台湾省-自动选择'
     <<: [*group_common_auto, *TW_filter]
+  - name: '香港'
+    <<: [*group_common_select, *HK_filter]
+    include-all: true
+    proxies: ['香港-自动选择']
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/HongKong.png'
+  - name: '香港-自动选择'
+    <<: [*group_common_auto, *HK_filter]
+
 
   - name: '低倍率节点'
     <<: [*group_common_select, *low_filter]
@@ -787,9 +829,11 @@ rules:
   - RULE-SET,spotify_ip,Spotify,no-resolve
   - RULE-SET,cryptocurrency,Crypto
   - RULE-SET,ehentai,EHentai
+  - RULE-SET,taiwan-media,台湾流媒体
 
   # 兜底规则
   - RULE-SET,geolocation-!cn,默认代理
   - RULE-SET,cn_ip,直连
   - RULE-SET,private_ip,直连
   - MATCH,漏网之鱼
+#（注：内容由AI生成）
